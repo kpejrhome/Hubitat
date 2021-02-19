@@ -25,7 +25,7 @@ definition(
     author: "Kevin Earley",
     description: "Turn on/off lights at sunrise/sunset.",
     category: "Convenience",
-    importUrl: "https://github.com/kpejrhome/Hubitat/raw/master/Sunrise-Sunset-Lights.groovy",
+    importUrl: "https://raw.githubusercontent.com/kpejrhome/Hubitat/master/Sunrise-Sunset-Lights.groovy",
     
     iconUrl: "",
     iconX2Url: "",
