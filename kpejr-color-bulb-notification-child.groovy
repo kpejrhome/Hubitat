@@ -26,7 +26,7 @@ definition(
     description: "Changes color bulb when contact is open",
     category: "Convenience",
     parent: "kpejr:Color Bulb Notification",
-    importUrl: "https://github.com/kpejrhome/Hubitat/raw/master/kpejr-color-bulb-notification-child.groovy",
+    importUrl: "https://raw.githubusercontent.com/kpejrhome/Hubitat/master/kpejr-color-bulb-notification-child.groovy",
     
     iconUrl: "",
     iconX2Url: "",
