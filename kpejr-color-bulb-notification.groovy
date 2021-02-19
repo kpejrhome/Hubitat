@@ -25,6 +25,7 @@ definition(
     author: "Kevin Earley",
     description: "Changes color bulb when contact is open",
     category: "Convenience",
+    importUrl: "https://github.com/kpejrhome/Hubitat/raw/master/kpejr-color-bulb-notification.groovy",
 	    
     iconUrl: "",
     iconX2Url: "",
