@@ -25,7 +25,7 @@ metadata{
         name: "NOAA Weather",
         namespace: "kpejr",
         author: "Kevin Earley",
-        importURL: "") {
+        importURL: "https://github.com/kpejrhome/Hubitat/raw/master/kpejr-NOAA-Weather-driver.groovy") {
         
         capability "Actuator"
         capability "Initialize"
