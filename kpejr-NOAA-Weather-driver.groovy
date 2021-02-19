@@ -136,7 +136,10 @@ def makeTile(){
 
 def makeDayTile(data, tileNumber){
     
-    day = data.data[0].'time-layout'[4].'start-valid-time'[tileNumber].@'period-name'
+    dayNodes = data.data[0].'time-layout'.findAll { it.'layout-key' == 'k-p24h-n7-2' }
+  
+    day =dayNodes[0].'start-valid-time'[tileNumber].@'period-name'
+    
     low = data.data[0].parameters.temperature[0].value[tileNumber]
     high = data.data[0].parameters.temperature[1].value[tileNumber] 
     weather = data.data[0].parameters.weather.'weather-conditions'[(tileNumber * 2) + 1].'@weather-summary'
@@ -155,16 +158,18 @@ def makeDayTile(data, tileNumber){
                        <td align=center style='font-size:small;'>${weather}</td>
                       
                     </tr>
-                  <tr><td></td></tr>
 
-                    <tr>
-                        <td align=center style='font-size:small;'>Low: ${low}&#176; F</td>
-                    </tr>
 
                     <tr><td></td></tr>
 
                     <tr>
                         <td align=center style='font-size:small;'>High: ${high}&#176; F</td>
+                    </tr>
+
+                  <tr><td></td></tr>
+
+                    <tr>
+                        <td align=center style='font-size:small;'>Low: ${low}&#176; F</td>
                     </tr>
 
                     </table>"""
