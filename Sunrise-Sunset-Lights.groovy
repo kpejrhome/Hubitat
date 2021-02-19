@@ -76,25 +76,23 @@ def sunriseHandler(){
     
     for(device in settings.sunriseOnSwitch){
         log.info "Sunrise turing on ${device.getLabel()}"
-        device.On()
+        device.on()
     }
     
      for(device in settings.sunriseOffSwitch){
          log.info "Sunrise turing off ${device.getLabel()}"
-        device.Off()
+        device.off()
     }
 }
 
 def sunsetHandler(){
     for(device in settings.sunsetOnSwitch){
         log.info "Sunset turing on ${device.getLabel()}"
-        device.On()
+        device.on()
     }
     
      for(device in settings.sunsetOffSwitch){
         log.info "Sunset turing off ${device.getLabel()}"
-        device.Off()
+        device.off()
     }
 }
-
- 
