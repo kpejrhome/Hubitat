@@ -25,6 +25,7 @@ definition(
     author: "Kevin Earley",
     description: "Turn on a light when opening a door after sunset",
     category: "Convenience",
+    importUrl: "https://raw.githubusercontent.com/kpejrhome/Hubitat/master/Sunset-Door-Light-Parent.groovy",	
 	    
     iconUrl: "",
     iconX2Url: "",
