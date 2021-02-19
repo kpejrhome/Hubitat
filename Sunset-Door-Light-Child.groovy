@@ -26,6 +26,7 @@ definition(
     description: "Turn on a light when opening a door after sunset.",
     category: "Convenience",
     parent: "kpejr:Sunset Door Light",
+    importUrl: "https://github.com/kpejrhome/Hubitat/raw/master/Sunset-Door-Light-Child.groovy",
     
     iconUrl: "",
     iconX2Url: "",
