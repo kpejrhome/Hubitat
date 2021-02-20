@@ -4,7 +4,7 @@
 *  Author: 
 *    Kevin Earley 
 *
-*  Documentation:  Use a virtual or real switch to group other switches
+*  Documentation:  Use a virtual or real button to group other switches
 *
 *  Changelog:
 
@@ -23,7 +23,7 @@ definition(
     name: "Group Switch - Child",
     namespace: "kpejr",
     author: "Kevin Earley",
-    description: "Use a virtual or real switch to group other switches",
+    description: "Use a virtual or real button to group other switches",
     category: "Convenience",
     parent: "kpejr:Group Switch",
     importUrl: "https://raw.githubusercontent.com/kpejrhome/Hubitat/master/kpejr-group-switch-child.groovy",
@@ -43,7 +43,7 @@ def childSetup(){
             
             label title: "Enter a name for this app", required: true
             
-             input "triggerSwitch", "capability.switch", title: "Which switch(s) do you want to use to activate other switches?", multiple: true, required: true
+             input "triggerButton", "capability.pushableButton", title: "Which button do you want to use to activate the switches?", multiple: false, required: true
              input "targetOnSwitch", "capability.switch", title: "Which switch(s) do you want to turn on?", multiple: true, required: false
              input "targetOffSwitch", "capability.switch", title: "Which switch(s) do you want to turn of?", multiple: true, required: false
         }
@@ -67,24 +67,23 @@ def updated() {
 def initialize(){
     log.info("Initializing with settings: ${settings}")
     
-    subscribe(settings.triggerSwitch, "switch", switchHandler)
+    subscribe(triggerButton, "pushed.1", buttonOnHandler)
+    subscribe(triggerButton, "pushed.2", buttonOffHandler)
 }
        
 
-def switchHandler( evt ){
-    log.info "${evt.name} was reported ${evt.value}"
-    
-    if(evt.value == "on") {
+def buttonOnHandler( evt ){
+ 
       for(device in settings.targetOnSwitch){
         log.info "Group Switch turing on ${device.getLabel()}"
         device.on()
       }
-    }
-    else
-    {
+}
+
+def buttonOffHandler( evt ){
+  
       for(device in settings.targetOffSwitch){
         log.info "Group Switch turing off ${device.getLabel()}"
         device.off()
       }
-    }
 }
