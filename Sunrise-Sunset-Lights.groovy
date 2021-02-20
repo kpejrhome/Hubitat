@@ -6,8 +6,9 @@
 *
 *  Documentation:  Turn on/off lights at sunset/sunrise.
 *
-*  Changelog: V1.0
-
+*  Changelog: v1.0
+*  1.01 - FIxed event handlers
+*
 *
 *  Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
 *  in compliance with the License. You may obtain a copy of the License at:
@@ -72,7 +73,7 @@ def initialize(){
     subscribe(location, "sunset", sunsetHandler)
 }
            
-def sunriseHandler(){
+def sunriseHandler(evt){
     
     for(device in settings.sunriseOnSwitch){
         log.info "Sunrise turing on ${device.getLabel()}"
@@ -85,7 +86,7 @@ def sunriseHandler(){
     }
 }
 
-def sunsetHandler(){
+def sunsetHandler(evt){
     for(device in settings.sunsetOnSwitch){
         log.info "Sunset turing on ${device.getLabel()}"
         device.on()
@@ -96,3 +97,5 @@ def sunsetHandler(){
         device.off()
     }
 }
+
+ 
