@@ -6,7 +6,8 @@
 *
 *  Documentation:  Displays temperature from NOAA site
 *
-*  Changelog: V1.0
+*  Changelog: v1.0
+*  1.0.1 Fixed XML nodes
  
 *
 *  Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
@@ -137,11 +138,22 @@ def makeTile(){
 def makeDayTile(data, tileNumber){
     
     dayNodes = data.data[0].'time-layout'.findAll { it.'layout-key' == 'k-p24h-n7-2' }
+    
+    if(dayNodes == null || dayNodes.count(0) == 0){
+       dayNodes = data.data[0].'time-layout'.findAll { it.'layout-key' == 'k-p24h-n7-1' } 
+    }
   
     day =dayNodes[0].'start-valid-time'[tileNumber].@'period-name'
     
-    low = data.data[0].parameters.temperature[0].value[tileNumber]
-    high = data.data[0].parameters.temperature[1].value[tileNumber] 
+    lowNodes = data.data[0].parameters.temperature.findAll { it.name == 'Daily Minimum Temperature'} 
+    low = lowNodes[0].value[tileNumber]
+    
+    log.debug lowNodes.count(0)
+    
+    highNodes = data.data[0].parameters.temperature.findAll { it.name == 'Daily Maximum Temperature'} 
+    high = highNodes[0].value[tileNumber]
+    log.debug highNodes
+
     weather = data.data[0].parameters.weather.'weather-conditions'[(tileNumber * 2) + 1].'@weather-summary'
     
     html =  """<table width=100% align=center>
