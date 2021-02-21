@@ -7,7 +7,8 @@
 *  Documentation:  Turn on a light when opening a door after sunset.
 *
 *  Changelog: V1.0
-
+*  V1.01 - Fixed presence event
+*
 *
 *  Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
 *  in compliance with the License. You may obtain a copy of the License at:
@@ -71,9 +72,7 @@ def initialize(){
     subscribe(settings.triggerPresence, "presence", presenseHandler)
 }
            
-
 def contactHandler( evt ){
-    log.info "Contact was turned ${evt.value}"
     
     if(evt.value == "open"){
         def currTime = new Date()
@@ -81,6 +80,7 @@ def contactHandler( evt ){
         if (currTime > location.sunset || currTime < location.sunrise) {
             // it's between sunset and sunrise
             for(device in settings.targetSwitch){
+                log.info "Turning on ${device.getLabel()}"
                 device.on()
             }
         }
@@ -88,16 +88,14 @@ def contactHandler( evt ){
 }
 
 def presenseHandler( evt ){
-    log.info "Person was detected on ${evt.value}"
     
-    if(evt.value == "open"){
-        def currTime = new Date()
-        
-        if (currTime > location.sunset || currTime < location.sunrise) {
-            // it's between sunset and sunrise
-            for(device in settings.targetSwitch){
-                device.on()
-            }
+    def currTime = new Date()
+
+    if (currTime > location.sunset || currTime < location.sunrise) {
+        // it's between sunset and sunrise
+        for(device in settings.targetSwitch){
+            log.info "Turning on ${device.getLabel()}"
+            device.on()
         }
-    } 
+    }
 }
