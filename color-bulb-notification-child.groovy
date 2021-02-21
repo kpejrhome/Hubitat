@@ -50,7 +50,7 @@ def childSetup(){
             input "notificationBulb", "capability.colorControl", title: "Which color bulb(s) will be the notification bulb?", multiple: true, required: true
 
             input(name: "notificationColor", type: "enum", title: "Which color should be used for notification?", options: ["Off","Blue","Green", "Grey", "Orange","Red","Purple","White","Yellow"])
-            input name:	"enableLogging", type: "bool", title: "Enable Debug Logging?", defaultValue: true, required: true
+            input name:	"enableLogging", type: "bool", title: "Enable Debug Logging?", defaultValue: false, required: true
         }
     }
 }
