@@ -7,7 +7,7 @@
 *  Documentation:  Use a virtual or real button to group other switches
 *
 *  Changelog: V1.0
-
+*  v1.0.1 - Added debug logging
 *
 *  Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
 *  in compliance with the License. You may obtain a copy of the License at:
@@ -46,31 +46,39 @@ def childSetup(){
              input "triggerButton", "capability.pushableButton", title: "Which button do you want to use to activate the switches?", multiple: false, required: true
              input "targetOnSwitch", "capability.switch", title: "Which switch(s) do you want to turn on?", multiple: true, required: false
              input "targetOffSwitch", "capability.switch", title: "Which switch(s) do you want to turn of?", multiple: true, required: false
+             input name:	"enableLogging", type: "bool", title: "Enable Debug Logging?", defaultValue: true, required: true
         }
     }
 }
 
 def installed() {
-    log.info "Installed application"
+    logDebug("Installed application")
     unsubscribe()
     unschedule()
     initialize()
 }
 
 def updated() {
-    log.info "Updated application"
+    logDebug("Updated application")
     unsubscribe()
     unschedule()
     initialize()
 }
 
 def initialize(){
-    log.info("Initializing with settings: ${settings}")
+    logDebug("Initializing with settings: ${settings}")
     
     subscribe(triggerButton, "pushed.1", buttonOnHandler)
     subscribe(triggerButton, "pushed.2", buttonOffHandler)
 }
        
+def logDebug(msg)
+{
+    if(enableLogging)
+    {
+        log.debug "${msg}"
+    }
+}
 
 def buttonOnHandler( evt ){
  
