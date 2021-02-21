@@ -46,7 +46,7 @@ def childSetup(){
              input "triggerButton", "capability.pushableButton", title: "Which button do you want to use to activate the switches?", multiple: false, required: true
              input "targetOnSwitch", "capability.switch", title: "Which switch(s) do you want to turn on?", multiple: true, required: false
              input "targetOffSwitch", "capability.switch", title: "Which switch(s) do you want to turn of?", multiple: true, required: false
-             input name:	"enableLogging", type: "bool", title: "Enable Debug Logging?", defaultValue: true, required: true
+             input name:	"enableLogging", type: "bool", title: "Enable Debug Logging?", defaultValue: false, required: true
         }
     }
 }
