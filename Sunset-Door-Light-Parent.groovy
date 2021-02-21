@@ -44,7 +44,7 @@ def mainPage() {
         section() {
             paragraph "This app will turn a light on when a door is opened after sunset."
             app(name: "newSunset", appName: "Sunset Door Light - Child", namespace: "kpejr", title: "<b>Add a Sunset Door Light app</b>", multiple: true)
-            input name:	"enableLogging", type: "bool", title: "Enable Debug Logging?", defaultValue: true, required: true
+            input name:	"enableLogging", type: "bool", title: "Enable Debug Logging?", defaultValue: false, required: true
         }		
 	}
 }
