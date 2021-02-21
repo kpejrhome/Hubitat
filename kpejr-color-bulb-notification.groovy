@@ -7,7 +7,8 @@
 *  Documentation:  Changes color led when contact is open
 *
 *  Changelog: V1.0
- 
+*  V1.0.1 - Added debug log option
+* 
 *
 *  Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
 *  in compliance with the License. You may obtain a copy of the License at:
@@ -32,29 +33,9 @@ definition(
     iconX3Url: "",
 )
 
-
 preferences {
      page name: "mainPage", title: "", install: true, uninstall: true
 } 
-
-def installed() {
-    log.info "Installed with settings: ${settings}"
-    initialize()
-}
-
-
-def updated() {
-    log.info "Updated with settings: ${settings}"
-    unsubscribe()
-    initialize()
-}
-
-def initialize() {
-    log.info "Color Bulb Notification has ${childApps.size()} child apps"
-    childApps.each { child ->
-        log.info "Child app: ${child.label}"
-    }
-}
 
 def mainPage() {
     dynamicPage(name: "mainPage") {
@@ -65,10 +46,40 @@ def mainPage() {
         
         section() {
             app(name: "newBulb", appName: "Color Bulb Notification - Child", namespace: "kpejr", title: "<b>Add a Color Bulb Notificaiton app</b>", multiple: true)
+            input name:	"enableLogging", type: "bool", title: "Enable Debug Logging?", defaultValue: true, required: true
         }		
 	}
 }
 
+def installed() {
+    logDebug("Installed application")
+    initialize()
+}
+
+
+def updated() {
+    logDebug("Updated application")
+    unsubscribe()
+    initialize()
+}
+
+def initialize() {
+    logDebug("Initialized with settings: ${settings}")
+    
+    childApps.each { child ->
+        logDebug("Child app: ${child.label}")
+    }
+}
+
+def logDebug(msg)
+{
+    if(enableLogging)
+    {
+        log.debug "${msg}"
+    }
+}
+
+// call child apps to see if any contacts are open
 def areAllClosed(){
 
       allClosed = "YES"
@@ -85,4 +96,3 @@ def areAllClosed(){
     
     return allClosed
 }
-
