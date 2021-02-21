@@ -6,8 +6,9 @@
 *
 *  Documentation:  Changes color led when contact is open
 *
-*  Changelog: V1.0
-
+*  Changelog: v1.0
+*  v1.0.1 - Added debug logging option
+*
 *
 *  Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
 *  in compliance with the License. You may obtain a copy of the License at:
@@ -49,31 +50,38 @@ def childSetup(){
             input "notificationBulb", "capability.colorControl", title: "Which color bulb(s) will be the notification bulb?", multiple: true, required: true
 
             input(name: "notificationColor", type: "enum", title: "Which color should be used for notification?", options: ["Off","Blue","Green", "Grey", "Orange","Red","Purple","White","Yellow"])
-        
-            
+            input name:	"enableLogging", type: "bool", title: "Enable Debug Logging?", defaultValue: true, required: true
         }
     }
 }
 
 def installed() {
-    log.info "Installed application"
+    logDebug("Installed application")
     unsubscribe()
     unschedule()
     initialize()
 }
 
 def updated() {
-    log.info "Updated application"
+    logDebug("Updated application")
     unsubscribe()
     unschedule()
     initialize()
 }
 
 def initialize(){
-    log.info("Initializing with settings: ${settings}")
+    logDebug("Initializing with settings: ${settings}")
     
     subscribe(settings.triggerContact, "contact", contactHandler)
     subscribe(settings.triggerWater, "water", waterHandler)
+}
+
+def logDebug(msg)
+{
+    if(enableLogging)
+    {
+        log.debug "${msg}"
+    }
 }
             
 def areAllClosed(){
@@ -82,7 +90,7 @@ def areAllClosed(){
     
     for(device in settings.triggerContact){
         if(device.currentValue("contact") == "open"){
-             log.info "${device.getLabel()} is still open"
+            logDebug("${device.getLabel()} is still open")
             allClosed = notificationColor
         }
     }
@@ -90,7 +98,7 @@ def areAllClosed(){
      for(device in settings.triggerWater){
         if(device.currentValue("water") == "wet"){
             
-            log.info "${device.getLabel()} is still wet"
+            logDebug("${device.getLabel()} is still wet")
             allClosed = notificationColor
         }
     }
@@ -99,10 +107,9 @@ def areAllClosed(){
 }
 
 def contactHandler( evt ){
-    log.info "Contact was turned ${evt.value}"
+    logDebug("contactHandler Device: ${evt.getDevice().getLabel()} Value: ${evt.value}")
     
     if(evt.value == "open"){
-        
         setBulbColor(notificationColor)
     } else{ // "closed"
         
@@ -118,7 +125,7 @@ def contactHandler( evt ){
 }
 
 def waterHandler( evt ){
-    log.info "Water was reported ${evt.value}"
+    logDebug("waterHandler Device: ${evt.getDevice().getLabel()} Value: ${evt.value}")
     
     if(evt.value == "wet"){ 
        setBulbColor(notificationColor)
