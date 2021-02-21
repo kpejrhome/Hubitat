@@ -8,6 +8,7 @@
 *
 *  Changelog: V1.0
 *  V1.01 - Fixed presence event
+*        - Added debug logging
 *
 *
 *  Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
@@ -47,38 +48,50 @@ def childSetup(){
             input "triggerContact", "capability.contactSensor", title: "Which contact sensor(s) will trigger the switch?", multiple: true, required: true
             input "triggerPresence", "capability.presenceSensor", title: "Which presence sensor(s) will trigger the switch?", multiple: true, required: false
             input "targetSwitch", "capability.switch", title: "Which switch(s) do you want to turn on?", multiple: true, required: true
+            input name:	"enableLogging", type: "bool", title: "Enable Debug Logging?", defaultValue: true, required: true
         }
     }
 }
 
 def installed() {
-    log.info "Installed application"
+    logDebug("Installed application")
+    
     unsubscribe()
     unschedule()
     initialize()
 }
 
 def updated() {
-    log.info "Updated application"
+     logDebug("Updated application")
+    
     unsubscribe()
     unschedule()
     initialize()
 }
 
 def initialize(){
-    log.info("Initializing with settings: ${settings}")
+    logDebug("Initializing with settings: ${settings}")
     
     subscribe(settings.triggerContact, "contact", contactHandler)
     subscribe(settings.triggerPresence, "presence", presenseHandler)
 }
+
+def logDebug(msg)
+{
+    if(enableLogging)
+    {
+        log.debug "${msg}"
+    }
+}
            
-def contactHandler( evt ){
+def contactHandler(evt){
+    logDebug("contactHandler Device: ${evt.getDevice().getLabel()} Value: ${evt.value}")
     
     if(evt.value == "open"){
         def currTime = new Date()
         
         if (currTime > location.sunset || currTime < location.sunrise) {
-            // it's between sunset and sunrise
+            // it's between sunset and sunrise turn on target devices
             for(device in settings.targetSwitch){
                 log.info "Turning on ${device.getLabel()}"
                 device.on()
@@ -87,12 +100,13 @@ def contactHandler( evt ){
     } 
 }
 
-def presenseHandler( evt ){
+def presenseHandler(evt){
+    logDebug("contactHandler Device: ${evt.getDevice().getLabel()} Value: ${evt.value}")
     
     def currTime = new Date()
 
     if (currTime > location.sunset || currTime < location.sunrise) {
-        // it's between sunset and sunrise
+       // it's between sunset and sunrise turn on target devices
         for(device in settings.targetSwitch){
             log.info "Turning on ${device.getLabel()}"
             device.on()
