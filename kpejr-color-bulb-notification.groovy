@@ -53,6 +53,8 @@ def mainPage() {
 
 def installed() {
     logDebug("Installed application")
+    unsubscribe()
+    unschedule()
     initialize()
 }
 
@@ -60,6 +62,7 @@ def installed() {
 def updated() {
     logDebug("Updated application")
     unsubscribe()
+    unschedule()
     initialize()
 }
 
