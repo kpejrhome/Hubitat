@@ -8,7 +8,7 @@
 *
 *  Changelog: v1.0
 *  v1.0.1 - Added debug logging option
-*
+*         - Moved notification bulb setting to parent
 *
 *  Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
 *  in compliance with the License. You may obtain a copy of the License at:
@@ -46,8 +46,6 @@ def childSetup(){
             
             input "triggerContact", "capability.contactSensor", title: "Which contact sensor(s) will trigger the color bulb?", multiple: true, required: false
             input "triggerWater", "capability.waterSensor", title: "Which water sensor(s) will trigger the color bulb?", multiple: true, required: false
-            
-            input "notificationBulb", "capability.colorControl", title: "Which color bulb(s) will be the notification bulb?", multiple: true, required: true
 
             input(name: "notificationColor", type: "enum", title: "Which color should be used for notification?", options: ["Off","Blue","Green", "Grey", "Orange","Red","Purple","White","Yellow"])
             input name:	"enableLogging", type: "bool", title: "Enable Debug Logging?", defaultValue: false, required: true
@@ -143,7 +141,7 @@ def waterHandler( evt ){
 }
 
 def setBulbColor(bulbColor){
-    for(device in settings.notificationBulb){
+    for(device in parent.notificationBulb){
         
     log.info "Setting ${device.getLabel()} color to ${bulbColor}"
     
