@@ -48,7 +48,7 @@ def appSetup(){
             input "sunRiseOffSwitch", "capability.switch", title: "Which switch(s) do you want to turn off at sunrise?", multiple: true, required: false
             input "sunsetOnSwitch", "capability.switch", title: "Which switch(s) do you want to turn on at sunset?", multiple: true, required: false
             input "sunsetOffSwitch", "capability.switch", title: "Which switch(s) do you want to turn off at sunset?", multiple: true, required: false
-            input name:	"enableLogging", type: "bool", title: "Enable Debug Logging?", defaultValue: true, required: true
+            input name:	"enableLogging", type: "bool", title: "Enable Debug Logging?", defaultValue: false, required: true
         }
     }
 }
