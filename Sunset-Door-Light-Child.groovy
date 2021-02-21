@@ -48,7 +48,7 @@ def childSetup(){
             input "triggerContact", "capability.contactSensor", title: "Which contact sensor(s) will trigger the switch?", multiple: true, required: true
             input "triggerPresence", "capability.presenceSensor", title: "Which presence sensor(s) will trigger the switch?", multiple: true, required: false
             input "targetSwitch", "capability.switch", title: "Which switch(s) do you want to turn on?", multiple: true, required: true
-            input name:	"enableLogging", type: "bool", title: "Enable Debug Logging?", defaultValue: true, required: true
+            input name:	"enableLogging", type: "bool", title: "Enable Debug Logging?", defaultValue: false, required: true
         }
     }
 }
