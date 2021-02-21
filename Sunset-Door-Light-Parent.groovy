@@ -6,8 +6,9 @@
 *
 *  Documentation:  Turn on a light when opening a door after sunset
 *
-*  Changelog: V1.0
- 
+*  Changelog: v1.0
+*  V1.0.1 - Added debug logging option
+*
 *
 *  Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
 *  in compliance with the License. You may obtain a copy of the License at:
@@ -37,30 +38,44 @@ preferences {
      page name: "mainPage", title: "", install: true, uninstall: true
 } 
 
-def installed() {
-    log.info "Installed with settings: ${settings}"
-    initialize()
-}
-
-
-def updated() {
-    log.info "Updated with settings: ${settings}"
-    unsubscribe()
-    initialize()
-}
-
-def initialize() {
-    childApps.each { child ->
-        log.info "Child app: ${child.label}"
-    }
-}
-
 def mainPage() {
     dynamicPage(name: "mainPage") {
         
         section() {
             paragraph "This app will turn a light on when a door is opened after sunset."
             app(name: "newSunset", appName: "Sunset Door Light - Child", namespace: "kpejr", title: "<b>Add a Sunset Door Light app</b>", multiple: true)
+            input name:	"enableLogging", type: "bool", title: "Enable Debug Logging?", defaultValue: true, required: true
         }		
 	}
 }
+
+def installed() {
+    logDebug("Installed application")
+    
+    initialize()
+}
+
+
+def updated() {
+    logDebug("Updated application")
+    
+    unsubscribe()
+    initialize()
+}
+
+def initialize() {
+    logDebug("Installed with settings: ${settings}")
+    
+    childApps.each { child ->
+        logDebug("Child app: ${child.label}")
+    }
+}
+
+def logDebug(msg)
+{
+    if(enableLogging)
+    {
+        log.debug "${msg}"
+    }
+}
+
