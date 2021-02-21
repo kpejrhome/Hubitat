@@ -42,7 +42,7 @@ def mainPage() {
                 
         section("Bulb Setup"){
                         
-                input "notificationBulb", "capability.colorControl", title: "Which color bulb(s) will be the notification bulb?", multiple: true, required: true
+                input "notificationBulb", "capability.colorControl", title: "Which color bulb(s) will be the notification bulb(s)?", multiple: true, required: true
 
                 input(name: "returnColor", type: "enum", title: "Which color should the bulb(s) return to after notifcation ends?", options: ["Off","Blue","Green","Grey", "Orange","Red","Purple", "White","Yellow"])
         }
