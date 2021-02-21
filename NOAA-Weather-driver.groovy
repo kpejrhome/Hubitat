@@ -26,7 +26,7 @@ metadata{
         name: "NOAA Weather",
         namespace: "kpejr",
         author: "Kevin Earley",
-        importURL: "https://raw.githubusercontent.com/kpejrhome/Hubitat/master/NOAA-Weather-driver.groovy") {
+        importURL: "https://raw.githubusercontent.com/kpejrhome/Hubitat/master/kpejr-NOAA-Weather-driver.groovy") {
         
         capability "Actuator"
         capability "Initialize"
@@ -47,29 +47,41 @@ metadata{
 preferences {
     section("URIs") {
         input "weatherUrl", "text", title: "Weather URI", required: false
-        input name: "logEnable", type: "bool", title: "Enable debug logging", defaultValue: true
+        input name:	"enableLogging", type: "bool", title: "Enable Debug Logging?", defaultValue: true, required: true
     }
 }
 
 def installed() {
+    logDebug("Installed application")
 	runEvery1Hour(poll)
 	poll()
 }
 
 def updated() {
+    logDebug("Updated application")
 	poll()
 }
 
 def initialize() {
+    logDebug("Initializing with settings: ${settings}")
 	poll()
 }
 
 def uninstalled() {
+    logDebug("Uninstalled application")
 	unschedule()
 }
 
+def logDebug(msg)
+{
+    if(enableLogging)
+    {
+        log.debug "${msg}"
+    }
+}
+
 def poll(){
-    log.debug "Device refresh"
+    logDebug("Device poll")
     
       def params = [
         uri: settings.weatherUrl,	
@@ -81,13 +93,16 @@ def poll(){
             
             city = "${response.data.data.location.description}"
             sendEvent(name: "city", value: city, displayed:true)
+            logDebug("City: ${city}")
             
             temperature = response.data.data[1].parameters.temperature[0].value.toInteger()
             sendEvent(name: "temperature", value: temperature, displayed:true)
             sendEvent(name: "TemperatureMeasurement", value: temperature, displayed:true)
+            logDebug("Temperature ${temperature}")
             
             weather = response.data.data[0].parameters.weather.'weather-conditions'[0].@'weather-summary'
             sendEvent(name: "weather", value: weather, displayed:true)
+            logDebug("wWather: ${weather}")
             
             makeTile()
             for(count = 0; count < 7; count++){
@@ -131,8 +146,9 @@ def makeTile(){
                     </table>"""
     
     tileHtml = html
+    logDebug("Tile Html: ${tileHtml}")
     
-     sendEvent(name: "tileHtml", value: tileHtml, displayed:true)
+    sendEvent(name: "tileHtml", value: tileHtml, displayed:true)
 }
 
 def makeDayTile(data, tileNumber){
@@ -142,19 +158,20 @@ def makeDayTile(data, tileNumber){
     if(dayNodes == null || dayNodes.count(0) == 0){
        dayNodes = data.data[0].'time-layout'.findAll { it.'layout-key' == 'k-p24h-n7-1' } 
     }
-  
+ 
     day =dayNodes[0].'start-valid-time'[tileNumber].@'period-name'
+    logDebug("Day: ${day}")
     
     lowNodes = data.data[0].parameters.temperature.findAll { it.name == 'Daily Minimum Temperature'} 
     low = lowNodes[0].value[tileNumber]
-    
-    log.debug lowNodes.count(0)
+    logDebug("Low: ${low}")
     
     highNodes = data.data[0].parameters.temperature.findAll { it.name == 'Daily Maximum Temperature'} 
     high = highNodes[0].value[tileNumber]
-    log.debug highNodes
-
-    weather = data.data[0].parameters.weather.'weather-conditions'[(tileNumber * 2) + 1].'@weather-summary'
+    logDebug("High: ${high}")
+    
+    weather = data.data[0].parameters.weather.'weather-conditions'[tileNumber * 2].'@weather-summary'
+    logDebug("Weather: ${weather}")
     
     html =  """<table width=100% align=center>
    
@@ -188,6 +205,8 @@ def makeDayTile(data, tileNumber){
     
     day0html = html
 
+    logDebug("Day Html: ${day0html}")
+    
     sendEvent(name: "day${tileNumber}Html", value: day0html, displayed:true)
 }
 
