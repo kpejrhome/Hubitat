@@ -8,7 +8,7 @@
 *
 *  Changelog: V1.0
 *  V1.0.1 - Added debug log option
-* 
+*         - Moved notification bulb setting to parent
 *
 *  Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
 *  in compliance with the License. You may obtain a copy of the License at:
@@ -41,6 +41,9 @@ def mainPage() {
     dynamicPage(name: "mainPage") {
                 
         section("Bulb Setup"){
+                        
+                input "notificationBulb", "capability.colorControl", title: "Which color bulb(s) will be the notification bulb?", multiple: true, required: true
+
                 input(name: "returnColor", type: "enum", title: "Which color should the bulb(s) return to after notifcation ends?", options: ["Off","Blue","Green","Grey", "Orange","Red","Purple", "White","Yellow"])
         }
         
@@ -53,8 +56,6 @@ def mainPage() {
 
 def installed() {
     logDebug("Installed application")
-    unsubscribe()
-    unschedule()
     initialize()
 }
 
@@ -62,7 +63,6 @@ def installed() {
 def updated() {
     logDebug("Updated application")
     unsubscribe()
-    unschedule()
     initialize()
 }
 
