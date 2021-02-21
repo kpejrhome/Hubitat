@@ -26,7 +26,7 @@ definition(
     description: "Use a virtual or real button to group other switches",
     category: "Convenience",
     parent: "kpejr:Group Switch",
-    importUrl: "https://raw.githubusercontent.com/kpejrhome/Hubitat/master/kpejr-group-switch-child.groovy",
+    importUrl: "https://raw.githubusercontent.com/kpejrhome/Hubitat/master/group-switch-child.groovy",
     
     iconUrl: "",
     iconX2Url: "",
@@ -81,7 +81,8 @@ def logDebug(msg)
 }
 
 def buttonOnHandler( evt ){
- 
+      logDebug("buttonOnHandler Device: ${evt.getDevice().getLabel()} Value: ${evt.value}")
+    
       for(device in settings.targetOnSwitch){
         log.info "Group Switch turing on ${device.getLabel()}"
         device.on()
@@ -89,7 +90,8 @@ def buttonOnHandler( evt ){
 }
 
 def buttonOffHandler( evt ){
-  
+     logDebug("buttonOffHandler Device: ${evt.getDevice().getLabel()} Value: ${evt.value}")
+    
       for(device in settings.targetOffSwitch){
         log.info "Group Switch turing off ${device.getLabel()}"
         device.off()
