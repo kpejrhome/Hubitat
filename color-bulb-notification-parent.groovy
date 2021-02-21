@@ -46,7 +46,7 @@ def mainPage() {
         
         section() {
             app(name: "newBulb", appName: "Color Bulb Notification - Child", namespace: "kpejr", title: "<b>Add a Color Bulb Notificaiton app</b>", multiple: true)
-            input name:	"enableLogging", type: "bool", title: "Enable Debug Logging?", defaultValue: true, required: true
+            input name:	"enableLogging", type: "bool", title: "Enable Debug Logging?", defaultValue: false, required: true
         }		
 	}
 }
