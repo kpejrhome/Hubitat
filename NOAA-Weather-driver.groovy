@@ -47,7 +47,7 @@ metadata{
 preferences {
     section("URIs") {
         input "weatherUrl", "text", title: "Weather URI", required: false
-        input name:	"enableLogging", type: "bool", title: "Enable Debug Logging?", defaultValue: true, required: true
+        input name:	"enableLogging", type: "bool", title: "Enable Debug Logging?", defaultValue: false, required: true
     }
 }
 
