@@ -9,7 +9,7 @@
 *  Changelog: v1.0
 *  1.01 - FIxed event handlers
 *       - Added debug logging
-*
+*  1.02 - Fixed bug in event logging
 *
 *  Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
 *  in compliance with the License. You may obtain a copy of the License at:
@@ -83,7 +83,7 @@ def logDebug(msg)
 }
 
 def sunriseHandler(evt){
-    logDebug("sunriseHandler Device: ${evt.getDevice().getLabel()} Value: ${evt.value}")
+    logDebug("sunriseHandler")
     
     for(device in settings.sunriseOnSwitch){
         log.info "Sunrise turing on ${device.getLabel()}"
@@ -97,7 +97,7 @@ def sunriseHandler(evt){
 }
 
 def sunsetHandler(evt){
-    logDebug("sunsetHandler Device: ${evt.getDevice().getLabel()} Value: ${evt.value}")
+    logDebug("sunsetHandler")
     
     for(device in settings.sunsetOnSwitch){
         log.info "Sunset turing on ${device.getLabel()}"
