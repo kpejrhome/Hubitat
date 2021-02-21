@@ -43,7 +43,7 @@ def mainPage() {
                 
         section() {
             app(name: "newGroup", appName: "Group Switch - Child", namespace: "kpejr", title: "<b>Add a Group Switch app</b>", multiple: true)
-            input name:	"enableLogging", type: "bool", title: "Enable Debug Logging?", defaultValue: true, required: true
+            input name:	"enableLogging", type: "bool", title: "Enable Debug Logging?", defaultValue: false, required: true
         }		
 	}
 }
