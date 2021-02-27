@@ -1,14 +1,11 @@
 /** 
-* Sunset Door Light- Child
+* Light Timer - Child
 *
 *  Author: 
 *    Kevin Earley 
 *
-*  Documentation:  Turn on a light when opening a door after sunset.
-*
+*  Documentation:  Turns lights off and on at a certain time.
 *  Changelog: V1.0
-*  V1.01 - Fixed presence event
-*        - Added debug logging
 *
 *
 *  Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
@@ -22,13 +19,13 @@
 *
 */
 definition(
-    name: "Sunset Door Light - Child",
+    name: "Light Timer - Child",
     namespace: "kpejr",
     author: "Kevin Earley",
-    description: "Turn on a light when opening a door after sunset.",
+    description: "Turns lights off and on at a certain time.",
     category: "Convenience",
-    parent: "kpejr:Sunset Door Light",
-    importUrl: "https://raw.githubusercontent.com/kpejrhome/Hubitat/master/Sunset-Door-Light-Child.groovy",
+    parent: "kpejr:Light Timer",
+    importUrl: "https://raw.githubusercontent.com/kpejrhome/Hubitat/master/light-timer-child.groovy",
     
     iconUrl: "",
     iconX2Url: "",
@@ -39,41 +36,47 @@ preferences{
 }
 
 def childSetup(){ 
-    dynamicPage(name: "childSetup", title: "Sunset Door Light - Child", nextPage: null, install: true, uninstall: true, refreshInterval: 0) {
+    dynamicPage(name: "childSetup", title: "Light Timer - Child", nextPage: null, install: true, uninstall: true, refreshInterval: 0) {
         
         section("Device Section"){
             
-            label title: "Enter a name for this app", required: true
+             label title: "Enter a name for this app", required: true
             
-            input "triggerContact", "capability.contactSensor", title: "Which contact sensor(s) will trigger the switch?", multiple: true, required: true
-            input "triggerPresence", "capability.presenceSensor", title: "Which presence sensor(s) will trigger the switch?", multiple: true, required: false
-            input "targetSwitch", "capability.switch", title: "Which switch(s) do you want to turn on?", multiple: true, required: true
-            input name:	"enableLogging", type: "bool", title: "Enable Debug Logging?", defaultValue: false, required: true
+             input name: "timerOn", type: "time", title: "What time do you want to turn the switches on?", required: false
+             input "targetOnSwitch", "capability.switch", title: "Which switch(s) do you want to turn on?", multiple: true, required: false
+            
+             input name: "timerOff", type: "time", title: "What time do you want to turn the switches off?", required: false
+             input "targetOffSwitch", "capability.switch", title: "Which switch(s) do you want to turn of?", multiple: true, required: false
+            
+             input name:	"enableLogging", type: "bool", title: "Enable Debug Logging?", defaultValue: false, required: true
         }
     }
 }
 
 def installed() {
     logDebug("Installed application")
-    
     unsubscribe()
     unschedule()
     initialize()
 }
 
 def updated() {
-     logDebug("Updated application")
-    
+    logDebug("Updated application")
     unsubscribe()
     unschedule()
     initialize()
 }
 
 def initialize(){
-    logDebug("Initializing with settings: ${settings}")
+     logDebug("Initializing with settings: ${settings}")
     
-    subscribe(settings.triggerContact, "contact", contactHandler)
-    subscribe(settings.triggerPresence, "presence", presenseHandler)
+    if(timerOn != null){
+         schedule(timerOn, timerOnHandler)
+    }
+    
+     if(timerOn != null){
+         schedule(timerOff, timerOffHandler)
+     }
 }
 
 def logDebug(msg)
@@ -83,33 +86,22 @@ def logDebug(msg)
         log.debug "${msg}"
     }
 }
-           
-def contactHandler(evt){
-    logDebug("contactHandler Device: ${evt.getDevice().getLabel()} Value: ${evt.value}")
+      
+def timerOnHandler( evt ){
+      logDebug("Timer On Event")
     
-    if(evt.value == "open"){
-        def currTime = new Date()
-        
-        if (currTime > location.sunset || currTime < location.sunrise) {
-            // it's between sunset and sunrise turn on target devices
-            for(device in settings.targetSwitch){
-                log.info "Turning on ${device.getLabel()}"
-                device.on()
-            }
-        }
-    } 
+      for(device in settings.targetOnSwitch){
+        log.info "Group Switch turing on ${device.getLabel()}"
+        device.on()
+      }
 }
 
-def presenseHandler(evt){
-    logDebug("contactHandler Device: ${evt.getDevice().getLabel()} Value: ${evt.value}")
+def timerOffHandler( evt ){
+     logDebug("Timer Off Event")
     
-    def currTime = new Date()
-
-    if (currTime > location.sunset || currTime < location.sunrise) {
-       // it's between sunset and sunrise turn on target devices
-        for(device in settings.targetSwitch){
-            log.info "Turning on ${device.getLabel()}"
-            device.on()
-        }
-    }
+      for(device in settings.targetOffSwitch){
+        log.info "Group Switch turing off ${device.getLabel()}"
+        device.off()
+      }
 }
+
