@@ -74,7 +74,7 @@ def initialize(){
          schedule(timerOn, timerOnHandler)
     }
     
-     if(timerOn != null){
+     if(timerOff != null){
          schedule(timerOff, timerOffHandler)
      }
 }
