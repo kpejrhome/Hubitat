@@ -4,7 +4,7 @@
 *  Author: 
 *    Kevin Earley 
 *
-*  Documentation:  Use a virtual or real button to group other switches
+*  Documentation:  Use a virtual, real button, or double tap switch to control other groups of switches
 *
 *  Changelog: V1.0
 *  v1.0.1 - Added debug logging
@@ -43,9 +43,12 @@ def childSetup(){
             
             label title: "Enter a name for this app", required: true
             
-             input "triggerButton", "capability.pushableButton", title: "Which button do you want to use to activate the switches?", multiple: false, required: true
+             input "triggerButton", "capability.pushableButton", title: "Which button do you want to use to activate the switches?", multiple: false, required: false
+             input "triggerDoubleTapSwitch", "capability.switch", title: "Which switch(s) do you want to double tap to activate other switches?", multiple: true, required: false
+            
              input "targetOnSwitch", "capability.switch", title: "Which switch(s) do you want to turn on?", multiple: true, required: false
              input "targetOffSwitch", "capability.switch", title: "Which switch(s) do you want to turn of?", multiple: true, required: false
+            
              input name:	"enableLogging", type: "bool", title: "Enable Debug Logging?", defaultValue: false, required: true
         }
     }
@@ -70,6 +73,9 @@ def initialize(){
     
     subscribe(triggerButton, "pushed.1", buttonOnHandler)
     subscribe(triggerButton, "pushed.2", buttonOffHandler)
+    
+    subscribe(triggerDoubleTapSwitch, "doubleTapped.1", buttonOnHandler)
+    subscribe(triggerDoubleTapSwitch, "doubleTapped.2", buttonOffHandler)
 }
        
 def logDebug(msg)
@@ -79,6 +85,7 @@ def logDebug(msg)
         log.debug "${msg}"
     }
 }
+
 
 def buttonOnHandler( evt ){
       logDebug("buttonOnHandler Device: ${evt.getDevice().getLabel()} Value: ${evt.value}")
