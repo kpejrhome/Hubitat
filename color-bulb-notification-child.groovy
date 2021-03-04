@@ -109,19 +109,19 @@ def contactHandler( evt ){
     logDebug("contactHandler Device: ${evt.getDevice().getLabel()} Value: ${evt.value}")
     
     if(evt.value == "open"){
-        setBulbColor(notificationColor)
-        setIndicatorColor(notificationColor)
+        parent.setBulbColor(notificationColor)
+        parent.setIndicatorColor(notificationColor)
     } else{ // "closed"
         
         allClosed = parent.areAllClosed()
         
         if(allClosed == "YES"){
-            setBulbColor(parent.returnColor)
-             setIndicatorColor(parent.returnColor)
+            parent.setBulbColor(parent.returnColor)
+             parent.setIndicatorColor(parent.returnColor)
         }
         else{
-            setBulbColor(allClosed)   
-            setIndicatorColor(allClosed)
+            parent.setBulbColor(allClosed)   
+            parent.setIndicatorColor(allClosed)
         }
     }
 }
@@ -130,92 +130,20 @@ def waterHandler( evt ){
     logDebug("waterHandler Device: ${evt.getDevice().getLabel()} Value: ${evt.value}")
     
     if(evt.value == "wet"){ 
-       setBulbColor(notificationColor)
-       setIndicatorColor(notificationColor)
+       parent.setBulbColor(notificationColor)
+       parent.setIndicatorColor(notificationColor)
     } else{ // "closed"
         
         allClosed = parent.areAllClosed()
         
         if(allClosed == "YES"){
-            setBulbColor(parent.returnColor)
-            setIndicatorColor(parent.returnColor)
+            parent.setBulbColor(parent.returnColor)
+            parent.setIndicatorColor(parent.returnColor)
         }
         else{
-            setBulbColor(allClosed)
-            setIndicatorColor(allClosed)
+            parent.setBulbColor(allClosed)
+            parent.setIndicatorColor(allClosed)
         }
     }
 }
 
-def setBulbColor(bulbColor){
-    for(device in parent.notificationBulb){
-        
-    log.info "Setting ${device.getLabel()} color to ${bulbColor}"
-    
-    switch(bulbColor) { 
-        case "White":
-            device.setColor([hue:1,saturation:1,level:100])
-            break;
-        case "Grey":
-            device.setColor([hue:72,saturation:6,level:39])
-            break;
-        case "Blue":
-            device.setColor([hue:56,saturation:100,level:100])
-            break;
-        case "Green":
-            device.setColor([hue:32,saturation:98,level:91])
-            break;
-        case "Orange":
-            device.setColor([hue:5,saturation:97,level:95])
-            break;
-        case "Red":
-            device.setColor([hue:97,saturation:95,level:95])
-            break;
-        case "Purple":
-            device.setColor([hue:73,saturation:100,level:100])
-            break;
-        case "Yellow":
-            device.setColor([hue:13,saturation:84,level:99])
-            break;
-        case "Off":
-            device.off()
-            break;
-        }
-    }
-}
-    def setIndicatorColor(bulbColor){
-    for(device in parent.notificationSwitch){
-        
-    log.info "Setting ${device.getLabel()} color to ${bulbColor}"
-    
-    switch(bulbColor) { 
-        case "White":
-            device.setIndicator(33491711)
-            break;
-        case "Grey":
-            device.setIndicator(33489440)
-            break;
-        case "Blue":
-            device.setIndicator(33490843)
-            break;
-        case "Green":
-            device.setIndicator(33490776)
-            break;
-        case "Orange":
-            device.setIndicator(33490711)
-            break;
-        case "Red":
-            device.setIndicator(33490688)
-            break;
-        case "Purple":
-            device.setIndicator(33490887)
-            break;
-        case "Yellow":
-            device.setIndicator(33490736)
-            break;
-        case "Off":
-            device.off()
-            break;
-        }
-    }
-    }
