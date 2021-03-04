@@ -9,6 +9,7 @@
 *  Changelog: V1.0
 *  V1.0.1 - Added debug log option
 *         - Moved notification bulb setting to parent
+*  V1.0.2 - Added Inovelli red switch notification leds
 *
 *  Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
 *  in compliance with the License. You may obtain a copy of the License at:
@@ -43,7 +44,10 @@ def mainPage() {
         section("Bulb Setup"){
                         
                 input "notificationBulb", "capability.colorControl", title: "Which color bulb(s) will be the notification bulb(s)?", multiple: true, required: true
-
+            
+                // using power meter to list inovelli red, not capabilty found for indicaor light
+                input "notificationSwitch", "capability.powerMeter", title: "Which switches will be used for notification?", multiple: true, required: true
+            
                 input(name: "returnColor", type: "enum", title: "Which color should the bulb(s) return to after notifcation ends?", options: ["Off","Blue","Green","Grey", "Orange","Red","Purple", "White","Yellow"])
         }
         
