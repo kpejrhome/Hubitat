@@ -9,6 +9,7 @@
 *  Changelog: v1.0
 *  v1.0.1 - Added debug logging option
 *         - Moved notification bulb setting to parent
+*  v1.0.2 - Added Inovelli red switch notification leds
 *
 *  Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
 *  in compliance with the License. You may obtain a copy of the License at:
@@ -109,15 +110,18 @@ def contactHandler( evt ){
     
     if(evt.value == "open"){
         setBulbColor(notificationColor)
+        setIndicatorColor(notificationColor)
     } else{ // "closed"
         
         allClosed = parent.areAllClosed()
         
         if(allClosed == "YES"){
             setBulbColor(parent.returnColor)
+             setIndicatorColor(parent.returnColor)
         }
         else{
             setBulbColor(allClosed)   
+            setIndicatorColor(allClosed)
         }
     }
 }
@@ -127,15 +131,18 @@ def waterHandler( evt ){
     
     if(evt.value == "wet"){ 
        setBulbColor(notificationColor)
+       setIndicatorColor(notificationColor)
     } else{ // "closed"
         
         allClosed = parent.areAllClosed()
         
         if(allClosed == "YES"){
             setBulbColor(parent.returnColor)
+            setIndicatorColor(parent.returnColor)
         }
         else{
-            setBulbColor(allClosed)   
+            setBulbColor(allClosed)
+            setIndicatorColor(allClosed)
         }
     }
 }
@@ -176,3 +183,39 @@ def setBulbColor(bulbColor){
         }
     }
 }
+    def setIndicatorColor(bulbColor){
+    for(device in parent.notificationSwitch){
+        
+    log.info "Setting ${device.getLabel()} color to ${bulbColor}"
+    
+    switch(bulbColor) { 
+        case "White":
+            device.setIndicator(33491711)
+            break;
+        case "Grey":
+            device.setIndicator(33489440)
+            break;
+        case "Blue":
+            device.setIndicator(33490843)
+            break;
+        case "Green":
+            device.setIndicator(33490776)
+            break;
+        case "Orange":
+            device.setIndicator(33490711)
+            break;
+        case "Red":
+            device.setIndicator(33490688)
+            break;
+        case "Purple":
+            device.setIndicator(33490887)
+            break;
+        case "Yellow":
+            device.setIndicator(33490736)
+            break;
+        case "Off":
+            device.off()
+            break;
+        }
+    }
+    }
