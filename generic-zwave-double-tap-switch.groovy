@@ -68,12 +68,12 @@ def logDebug(msg)
 
 
 def configure() {
-    def cmds = []
+////    def cmds = []
   
-    cmds << zwave.configurationV2.configurationGet(parameterNumber: 3).format()
-    cmds << zwave.configurationV2.configurationGet(parameterNumber: 4).format()
+////    cmds << zwave.configurationV2.configurationGet(parameterNumber: 3).format()
+////    cmds << zwave.configurationV2.configurationGet(parameterNumber: 4).format()
     
-    delayBetween(cmds,500)
+////    delayBetween(cmds,500)
 }
 
 def updated() {
@@ -195,8 +195,8 @@ def flashOff(){
 def refresh() {
 	def cmds = []
 	cmds << zwave.switchBinaryV1.switchBinaryGet().format()
-    cmds << zwave.configurationV2.configurationGet(parameterNumber: 3).format()
-    cmds << zwave.configurationV2.configurationGet(parameterNumber: 4).format()
+////    cmds << zwave.configurationV2.configurationGet(parameterNumber: 3).format()
+////    cmds << zwave.configurationV2.configurationGet(parameterNumber: 4).format()
     
 	if (getDataValue("MSR") == null) {
 		cmds << zwave.manufacturerSpecificV1.manufacturerSpecificGet().format()
@@ -208,8 +208,8 @@ def refresh() {
 def on() {
 
     delayBetween([
-        zwave.basicV1.basicSet(value: 0xFF).format(),
-        zwave.basicV1.basicGet().format()
+        secure(zwave.basicV1.basicSet(value: 0xFF).format()),
+        secure(zwave.basicV1.basicGet().format())
         ], 200)
 }
 
@@ -217,8 +217,8 @@ def off() {
     state.flashing = false
     
 	delayBetween([
-		zwave.basicV1.basicSet(value: 0x00).format(),
-		zwave.basicV1.basicGet().format()
+		secure(zwave.basicV1.basicSet(value: 0x00).format()),
+		secure(zwave.basicV1.basicGet().format())
 	], 200)
 }
 
