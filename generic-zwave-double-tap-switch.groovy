@@ -49,8 +49,8 @@ metadata {
 	}
 
     preferences {
-        input name: "indicatorLed", type: "enum", title: "Turn on Indicator", multiple: false, options: ["0" : "When Off", "1" : "When On", "2" : "Never"], required: false, displayDuringSetup: true
-        input name: "invertedButtons", type: "enum", title: "Invert Buttons", multiple: false, options: ["0" : "Normal", "1" : "Inverted"], required: false, displayDuringSetup: true
+        input name: "indicatorLed", type: "enum", title: "Turn on Indicator", multiple: false, options: ["0" : "When Off", "1" : "When On", "2" : "Never"], defaultValue:2, required: false, displayDuringSetup: true
+        input name: "invertedButtons", type: "enum", title: "Invert Buttons", multiple: false, options: ["0" : "Normal", "1" : "Inverted"], defaultValue:0, required: false, displayDuringSetup: true
         input name: "flashRate", type: "enum", title: "Flash rate", options:[[750:"750ms"],[1000:"1s"],[2000:"2s"],[5000:"5s"]], defaultValue: 750
         input name: "enableLogging", type: "bool", title: "Enable debug logging", defaultValue: false	
 	    input name: "logDescription", type: "bool", title: "Enable descriptionText logging", defaultValue: true	
