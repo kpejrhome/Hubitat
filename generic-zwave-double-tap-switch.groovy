@@ -51,9 +51,10 @@ metadata {
     preferences {
         input name: "indicatorLed", type: "enum", title: "Turn on Indicator", multiple: false, options: ["0" : "When Off", "1" : "When On", "2" : "Never"], required: false, displayDuringSetup: true
         input name: "invertedButtons", type: "enum", title: "Invert Buttons", multiple: false, options: ["0" : "Normal", "1" : "Inverted"], required: false, displayDuringSetup: true
-        
+        input name: "flashRate", type: "enum", title: "Flash rate", options:[[750:"750ms"],[1000:"1s"],[2000:"2s"],[5000:"5s"]], defaultValue: 750
         input name: "enableLogging", type: "bool", title: "Enable debug logging", defaultValue: false	
 	    input name: "logDescription", type: "bool", title: "Enable descriptionText logging", defaultValue: true	
+ 
     }
 }
 
@@ -161,7 +162,6 @@ def zwaveEvent(hubitat.zwave.commands.versionv1.VersionReport cmd) {
 	logDebug "Version report: Device: ${device.displayName} Firmware: $fw, Z-Wave version: ${cmd.zWaveProtocolVersion}.${cmd.zWaveProtocolSubVersion}"
 }
 
-
 def zwaveEvent(hubitat.zwave.Command cmd) {
     log.warn "Unhandled Command: Device: ${device.displayName} Command: ${cmd}"
 }
@@ -174,13 +174,22 @@ def doubleTapDown() {
 	sendEvent(name: "doubleTapped", value: 2, descriptionText: "Double-tap down (button 2) on $device.displayName", isStateChange: true, type: "digital")
 }
 
-def flash() {
-      delayBetween([
-        zwave.basicV1.basicSet(value: 0xFF).format(),
-        zwave.basicV1.basicGet().format(),
-        zwave.basicV1.basicSet(value: 0x00).format(),
-		zwave.basicV1.basicGet().format()
-        ], 500)
+def flash(){
+    if (txtEnable) log.info "${device.displayName} was set to flash with a rate of ${flashRate ?: 750} milliseconds"
+    state.flashing = true
+    return flashOn()
+}
+
+def flashOn(){
+    if (!state.flashing) return
+    runInMillis((flashRate ?: 750).toInteger(), flashOff)
+    return secure(zwave.basicV1.basicSet(value: 0xFF))
+}
+
+def flashOff(){
+    if (!state.flashing) return
+    runInMillis((flashRate ?: 750).toInteger(), flashOn)
+    return secure(zwave.basicV1.basicSet(value: 0x00))
 }
 
 def refresh() {
@@ -205,8 +214,18 @@ def on() {
 }
 
 def off() {
+    state.flashing = false
+    
 	delayBetween([
 		zwave.basicV1.basicSet(value: 0x00).format(),
 		zwave.basicV1.basicGet().format()
 	], 200)
+}
+
+def secure(String cmd){
+    return zwaveSecureEncap(cmd)
+}
+
+def secure(hubitat.zwave.Command cmd){
+    return zwaveSecureEncap(cmd)
 }
