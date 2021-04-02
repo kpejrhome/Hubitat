@@ -49,7 +49,8 @@ def childSetup(){
             input "triggerContact", "capability.contactSensor", title: "Which contact sensor(s) will trigger the switch?", multiple: true, required: true
             input "triggerPresence", "capability.presenceSensor", title: "Which presence sensor(s) will trigger the switch?", multiple: true, required: false
             input "targetSwitch", "capability.switch", title: "Which switch(s) do you want to turn on?", multiple: true, required: true
-            input name:	"AfterSunsetOnly", type: "bool", title: "Only turn on after sunset?", defaultValue: false, required: true
+            input name:	"afterSunsetOnly", type: "bool", title: "Only turn on after sunset?", defaultValue: false, required: true
+            input name: "offTimerMinutes", type: "number", title: "How many minutes to wait till turning off?", defaultValue: 0, required: true
             input name:	"enableLogging", type: "bool", title: "Enable Debug Logging?", defaultValue: false, required: true
         }
     }
@@ -97,19 +98,13 @@ def contactHandler(evt){
             // after sonset on only set
             if (currTime > location.sunset || currTime < location.sunrise) {
                 // it's between sunset and sunrise turn on target devices
-                for(device in settings.targetSwitch){
-                    log.info "Turning on ${device.getLabel()}"
-                    device.on()
-                }
+               turnLightsOn()
             }
         }
         else
         {
             // Always turn on no matter time set
-             for(device in settings.targetSwitch){
-                    log.info "Turning on ${device.getLabel()}"
-                    device.on()
-             }
+            turnLightsOn()
         }    
     } 
 }
@@ -119,11 +114,36 @@ def presenseHandler(evt){
     
     def currTime = new Date()
 
-    if (currTime > location.sunset || currTime < location.sunrise) {
-       // it's between sunset and sunrise turn on target devices
-        for(device in settings.targetSwitch){
-            log.info "Turning on ${device.getLabel()}"
-            device.on()
+     if(settings.afterSunsetOnly == true)
+     {
+        if (currTime > location.sunset || currTime < location.sunrise) {
+           // it's between sunset and sunrise turn on target devices
+           turnLightsOn()
         }
     }
+    else {
+        // any time light turn on
+       turnLightsOn()
+    }
+}
+
+def turnLightsOn(){
+      for(device in settings.targetSwitch){
+                log.info "Turning on ${device.getLabel()}"
+                device.on()
+      }
+    
+    if(settings.offTimerMinutes > 0){
+        def offMinutes = settings.offTimerMinutes * 60
+        logDebug "Off Minutes ${offMinutes}"
+        
+        runIn(offMinutes, "turnLightsOff")
+    }
+}
+
+def turnLightsOff(){
+      for(device in settings.targetSwitch){
+                log.info "Turning off ${device.getLabel()}"
+                device.off()
+      }
 }
