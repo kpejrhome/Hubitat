@@ -9,6 +9,7 @@
 *  Changelog: V1.0
 *  V1.01 - Fixed presence event
 *        - Added debug logging
+*  V1.02 - Added turn off after sunset only option so a door can turn a light on after sunset or always.
 *
 *
 *  Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
@@ -48,6 +49,7 @@ def childSetup(){
             input "triggerContact", "capability.contactSensor", title: "Which contact sensor(s) will trigger the switch?", multiple: true, required: true
             input "triggerPresence", "capability.presenceSensor", title: "Which presence sensor(s) will trigger the switch?", multiple: true, required: false
             input "targetSwitch", "capability.switch", title: "Which switch(s) do you want to turn on?", multiple: true, required: true
+            input name:	"AfterSunsetOnly", type: "bool", title: "Only turn on after sunset?", defaultValue: false, required: true
             input name:	"enableLogging", type: "bool", title: "Enable Debug Logging?", defaultValue: false, required: true
         }
     }
@@ -90,13 +92,25 @@ def contactHandler(evt){
     if(evt.value == "open"){
         def currTime = new Date()
         
-        if (currTime > location.sunset || currTime < location.sunrise) {
-            // it's between sunset and sunrise turn on target devices
-            for(device in settings.targetSwitch){
-                log.info "Turning on ${device.getLabel()}"
-                device.on()
+        if(settings.afterSunsetOnly == true)
+        {
+            // after sonset on only set
+            if (currTime > location.sunset || currTime < location.sunrise) {
+                // it's between sunset and sunrise turn on target devices
+                for(device in settings.targetSwitch){
+                    log.info "Turning on ${device.getLabel()}"
+                    device.on()
+                }
             }
         }
+        else
+        {
+            // Always turn on no matter time set
+             for(device in settings.targetSwitch){
+                    log.info "Turning on ${device.getLabel()}"
+                    device.on()
+             }
+        }    
     } 
 }
 
