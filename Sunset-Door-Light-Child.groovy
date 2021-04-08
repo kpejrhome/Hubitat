@@ -10,6 +10,7 @@
 *  V1.01 - Fixed presence event
 *        - Added debug logging
 *  V1.02 - Added turn off after sunset only option so a door can turn a light on after sunset or always.
+*  V1.03 - Added pause before turning on option
 *
 *
 *  Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
@@ -51,6 +52,7 @@ def childSetup(){
             input "targetSwitch", "capability.switch", title: "Which switch(s) do you want to turn on?", multiple: true, required: true
             input name:	"afterSunsetOnly", type: "bool", title: "Only turn on after sunset?", defaultValue: false, required: true
             input name: "offTimerMinutes", type: "number", title: "How many minutes to wait till turning off?", defaultValue: 0, required: true
+            input name: "pauseOnSeconds", type: "number", title: "How many seconds to wait till turning on?", defaultValue: 0, required: true
             input name:	"enableLogging", type: "bool", title: "Enable Debug Logging?", defaultValue: false, required: true
         }
     }
@@ -90,6 +92,10 @@ def logDebug(msg)
 def contactHandler(evt){
     logDebug("contactHandler Device: ${evt.getDevice().getLabel()} Value: ${evt.value}")
     
+    if(settings.pauseOnSeconds > 0){
+        pauseExecution(settings.pauseOnSeconds * 1000)
+    }
+        
     if(evt.value == "open"){
         def currTime = new Date()
         
