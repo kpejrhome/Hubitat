@@ -9,7 +9,6 @@
 *  Changelog: v1.0
 *  v1.0.1 - Added debug logging option
 *         - Moved notification bulb setting to parent
-*  v1.0.2 - Added Inovelli red switch notification leds
 *
 *  Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
 *  in compliance with the License. You may obtain a copy of the License at:
@@ -115,6 +114,7 @@ def contactHandler( evt ){
         allClosed = parent.areAllClosed()
         
         if(allClosed == "YES"){
+            logDebug parent.returnColor
             parent.setBulbColor(parent.returnColor)
         }
         else{
@@ -133,6 +133,7 @@ def waterHandler( evt ){
         allClosed = parent.areAllClosed()
         
         if(allClosed == "YES"){
+            
             parent.setBulbColor(parent.returnColor)
         }
         else{
