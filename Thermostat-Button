@@ -1,0 +1,115 @@
+/** 
+* Thermostat Button
+*
+*  Author: 
+*    Kevin Earley 
+*
+*  Documentation:  Turn heat or cool on or off at a certain temperature with a dashboard button
+*
+*  Changelog: v1.0
+*
+*
+*  Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
+*  in compliance with the License. You may obtain a copy of the License at:
+*
+*      http://www.apache.org/licenses/LICENSE-2.0
+*
+*  Unless required by applicable law or agreed to in writing, software distributed under the License is distributed
+*  on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License
+*  for the specific language governing permissions and limitations under the License.
+*
+*/
+definition(
+    name: "Thermostat Button",
+    namespace: "kpejr",
+    author: "Kevin Earley",
+    description: "Turn heat or cool on or off at a certain temperature with a dashboard button",
+    category: "Convenience",
+    importUrl: "https://raw.githubusercontent.com/kpejrhome/Hubitat/master/thermostat-button.groovy",
+    
+    iconUrl: "",
+    iconX2Url: "",
+    iconX3Url: "" )
+
+preferences{ 
+    page( name: "thermostatSetup")
+}
+
+def thermostatSetup(){ 
+    dynamicPage(name: "thermostatSetup", title: "Thermostat Button", nextPage: null, install: true, uninstall: true, refreshInterval: 0) {
+        
+        section("Device Section"){
+            
+            label title: "Enter a name for this app", required: true
+            
+            input "triggerButton", "capability.pushableButton", title: "Which button do you want to control the thermostat?", multiple: true, required: false
+            input "deviceThermostat", "capability.thermostat", title: "Which thermostat(s) do you wan to control?", multiple: true, required: false
+
+            input name:	"coolTemperature", type: "number", title: "Cool temperature?", defaultValue: 69, required: true
+            input name:	"heatTemperature", type: "number", title: "Heat temperature?", defaultValue: 67, required: true
+            
+            input name:	"enableLogging", type: "bool", title: "Enable Debug Logging?", defaultValue: false, required: true
+        }
+    }
+}
+
+def installed() {
+    logDebug("Installed application")
+    unsubscribe()
+    unschedule()
+    initialize()
+}
+
+def updated() {
+    logDebug("Updated application")
+    unsubscribe()
+    unschedule()
+    initialize()
+}
+
+def initialize(){
+    logDebug("Initializing with settings: ${settings}")
+    
+    subscribe(settings.triggerButton, "pushed.1", coolHandler)
+    subscribe(settings.triggerButton, "pushed.2", heatHandler)
+    subscribe(settings.triggerButton, "pushed.3", offHandler)
+}
+
+def logDebug(msg)
+{
+    if(enableLogging)
+    {
+        log.debug "${msg}"
+    }
+}
+ 
+
+def coolHandler( evt ){
+    logDebug("coolHandler Device:")
+     
+    for(device in settings.deviceThermostat){
+        log.info "Thermostat Button turning cool on ${device.getLabel()} temperature ${settings.coolTemperature}"
+        device.cool()
+        device.setCoolingSetpoint(settings.coolTemperature)
+    }
+    
+}
+
+def heatHandler( evt ){
+    logDebug("coolHandler Device: ${evt.getDevice().getLabel()} Value: ${evt.value}")
+    
+     for(device in settings.deviceThermostat){
+        log.info "Sunrise turing heat on ${device.getLabel()} temperature ${settings.coolTemperature}"
+        device.heat()
+        device.setHeatingSetpoint(settings.heatTemperature)
+    }
+}
+
+def offHandler( evt ){
+    logDebug("coolHandler Device: ${evt.getDevice().getLabel()} Value: ${evt.value}")
+    
+     for(device in settings.deviceThermostat){
+        log.info "Thermostat Button turning off ${device.getLabel()}"
+        device.off()
+    }
+}
