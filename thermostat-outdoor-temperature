@@ -42,7 +42,127 @@ def thermostatSetup(){
             
             label title: "Enter a name for this app", required: true
             
+            input "triggerWeather", "device.OpenWeatherMap", title: "Which weather device do you want to control the thermostat?", multiple: false, required: true/** 
+* Thermostat Outdoor Temperature
+*
+*  Author: 
+*    Kevin Earley 
+*
+*  Documentation:  Turn heat or cool on or off at a certain outdoor open weather temperature
+*
+*  Changelog: v1.0
+*
+*
+*  Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
+*  in compliance with the License. You may obtain a copy of the License at:
+*
+*      http://www.apache.org/licenses/LICENSE-2.0
+*
+*  Unless required by applicable law or agreed to in writing, software distributed under the License is distributed
+*  on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License
+*  for the specific language governing permissions and limitations under the License.
+*
+*/
+definition(
+    name: "Thermostat Outdoor Temperature",
+    namespace: "kpejr",
+    author: "Kevin Earley",
+    description: "Turn heat or cool on or off at a certain outdoor open weather temperature",
+    category: "Convenience",
+    importUrl: "https://raw.githubusercontent.com/kpejrhome/Hubitat/master/thermostat-outdoor-temperature.groovy",
+    
+    iconUrl: "",
+    iconX2Url: "",
+    iconX3Url: "" )
+
+preferences{ 
+    page( name: "thermostatSetup")
+}
+
+def thermostatSetup(){ 
+    dynamicPage(name: "thermostatSetup", title: "Thermostat Button", nextPage: null, install: true, uninstall: true, refreshInterval: 0) {
+        
+        section("Device Section"){
+            
+            label title: "Enter a name for this app", required: true
+            
             input "triggerWeather", "device.OpenWeatherMap", title: "Which weather device do you want to control the thermostat?", multiple: false, required: true
+            input "deviceThermostat", "capability.thermostat", title: "Which thermostat(s) do you wan to control?", multiple: true, required: true
+
+            input name:	"coolTemperature", type: "number", title: "Cool temperature setting?", defaultValue: 69, required: true
+            input name:	"heatTemperature", type: "number", title: "Heat temperature setting?", defaultValue: 67, required: true
+            
+            input name:	"outdoorCoolTemperature", type: "number", title: "Minimum outdoor temperature for cooling?", defaultValue: 61, required: true
+            input name:	"outdoorHeatTemperature", type: "number", title: "Start outdoor temperature for heating?", defaultValue: 57, required: true
+            input name:	"outdoorStartCoolTemperature", type: "number", title: "start outdoor temperature for cooling?", defaultValue: 65, required: true
+         
+            input name:	"enableLogging", type: "bool", title: "Enable Debug Logging?", defaultValue: false, required: true
+        }
+    }
+}
+
+def installed() {
+    logDebug("Installed application")
+    unsubscribe()
+    unschedule()
+    initialize()
+}
+
+def updated() {
+    logDebug("Updated application")
+    unsubscribe()
+    unschedule()
+    initialize()
+}
+
+def initialize(){
+    logDebug("Initializing with settings: ${settings}")
+    
+    schedule("0 0 * * * ?", checkTemperature)
+
+}
+
+def logDebug(msg)
+{
+    if(enableLogging)
+    {
+        log.debug "${msg}"
+    }
+}
+ 
+
+def checkTemperature(){
+    
+    def temp = 0;
+    
+     for(device in settings.triggerWeather){
+        temp = device.currentValue("temperature");
+     }
+    
+    logDebug "Outdoor temperature ${temp}"
+    
+    if(temp > 0 && temp < outdoorHeatTemperature){
+        for(device in settings.deviceThermostat){
+            log.info "Thermostat temperature turning heat on ${device.getLabel()} outdoor temperature ${temp} temperature ${settings.coolTemperature}"
+            device.heat()
+            device.setHeatingSetpoint(settings.heatTemperature)
+        }
+    }
+    else if(temp > 0 && temp < outdoorCoolTemperature){
+        for(device in settings.deviceThermostat){
+            log.info "Thermostat temperature turning off ${device.getLabel()} outdoor temperature ${temp}"
+            device.off()
+        }
+    }
+     else if(temp > outdoorStartCoolTemperature){
+        for(device in settings.deviceThermostat){
+            log.info "Thermostat temperature turning cool on ${device.getLabel()} outdoor temperature ${temp} temperature ${settings.coolTemperature}"
+            device.cool()
+            device.setCoolingSetpoint(settings.coolTemperature)
+        }
+    }
+}
+
             input "deviceThermostat", "capability.thermostat", title: "Which thermostat(s) do you wan to control?", multiple: true, required: true
 
             input name:	"coolTemperature", type: "number", title: "Cool temperature setting?", defaultValue: 69, required: true
