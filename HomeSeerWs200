@@ -468,7 +468,7 @@ def zwaveEvent(hubitat.zwave.commands.centralscenev1.CentralSceneNotification cm
                 case 0:
                 // Press Once
                     result += createEvent(tapUp1Response("physical"))
-                    result += createEvent([name: "switch", value: "on", type: "physical"])
+                    result += sendEvent([name: "switch", value: "on", type: "physical"])
                     break
                 case 1:
                     result=createEvent([name: "switch", value: "on", type: "physical"])
@@ -506,7 +506,7 @@ def zwaveEvent(hubitat.zwave.commands.centralscenev1.CentralSceneNotification cm
                 case 0:
                 // Press Once
                     result += createEvent(tapDown1Response("physical"))
-                    result += createEvent([name: "switch", value: "off", type: "physical"])
+                    result += sendEvent([name: "switch", value: "off", type: "physical"])
                     break
                 case 1:
                     result=createEvent([name: "switch", value: "off", type: "physical"])
