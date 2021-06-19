@@ -11,6 +11,7 @@
 *         - Moved notification bulb setting to parent
 *  V1.0.2 - Added Inovelli red switch notification leds
 *  V1.0.3 - Removed Inovelli added home seer
+*  V1.0.4 - Added check for switch on
 *
 *  Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
 *  in compliance with the License. You may obtain a copy of the License at:
@@ -46,7 +47,8 @@ def mainPage() {
                         
             input "notificationBulb", "capability.colorControl", title: "Which color bulb(s) will be the notification bulb(s)?", multiple: true, required: true
             input "notificationSwitch", "device.HomeseerSwitch", title: "Which switch(s) will be notification led(s)?", multiple: true, required: true
-               
+            input "bulbSwitch", "capability.switch", title: "Which switches(s) control a color bulb?", multiple: true, required: true
+        
             input(name: "returnColor", type: "enum", title: "Which color should the bulb(s) return to after notifcation ends?", options: ["Off","Blue","Green","Grey", "Orange","Red","Purple", "White","Yellow"])
    
         }
@@ -77,6 +79,7 @@ def initialize() {
         logDebug("Child app: ${child.label}")
     }
     
+   subscribe(settings.bulbSwitch, "switch.on", bulbOnHandler)
 }
 
 def logDebug(msg)
@@ -85,6 +88,20 @@ def logDebug(msg)
     {
         log.debug "${msg}"
     }
+}
+
+def bulbOnHandler( evt ){
+      logDebug("bulbOnHandler Device: ${evt.getDevice().getLabel()} Value: ${evt.value}")
+    
+       allClosed = areAllClosed()
+        
+        if(allClosed == "YES"){
+            logDebug settings.returnColor
+            setBulbColor(settings.returnColor)
+        }
+        else{
+            setBulbColor(allClosed)   
+        }
 }
 
 
